@@ -1,0 +1,23 @@
+let
+    StartDate = List.Min(vw_fact_orders[order_date]),
+    EndDate = List.Max(vw_fact_orders[order_date]),
+    DateList = List.Dates(StartDate, Number.From(EndDate - StartDate) + 1, #duration(1,0,0,0)),
+    #"Converted to Table" = Table.FromList(DateList, Splitter.SplitByNothing(), {"date"}),
+    #"Inserted Year" = Table.AddColumn(#"Converted to Table", "Year", each Date.Year([date]), Int64.Type),
+    #"Inserted Month" = Table.AddColumn(#"Inserted Year", "Month", each Date.Month([date]), Int64.Type),
+    #"Inserted Month Name" = Table.AddColumn(#"Inserted Month", "Month Name", each Date.MonthName([date]), type text),
+    #"Inserted Quarter" = Table.AddColumn(#"Inserted Month Name", "Quarter", each Date.QuarterOfYear([date]), Int64.Type),
+    #"Inserted Day" = Table.AddColumn(#"Inserted Quarter", "Day", each Date.Day([date]), Int64.Type),
+    #"Inserted Day Name" = Table.AddColumn(#"Inserted Day", "Day Name", each Date.DayOfWeekName([date]), type text),
+    #"Added IsWeekend" = Table.AddColumn(#"Inserted Day Name", "is_weekend", 
+        each if Date.DayOfWeek([date], Day.Sunday) = 5 
+             or Date.DayOfWeek([date], Day.Sunday) = 6 
+        then "Weekend" 
+        else "Weekday", type text),
+    #"Added Quarter Label" = Table.AddColumn(#"Added IsWeekend", 
+        "quarter_label", each "Q" & Text.From([Quarter]), type text),
+    #"Added Fiscal Label" = Table.AddColumn(#"Added Quarter Label", 
+        "fiscal_label", each "FY" & Text.From([Year]) & " " & [quarter_label], type text),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Fiscal Label",{{"date", type date}})
+in
+    #"Changed Type"
