@@ -15,7 +15,7 @@ Instead of relying on manual, fragile, and slow Excel spreadsheets, these projec
 ---
 
 ## Technical Skills Demonstrated
-* **Database Engineering (T-SQL):** Relational schema design, primary/foreign key constraints, transactional indexing, and scripting batch control (`GO` / `USE`).
+* **Database Design & T-SQL Development:** Relational schema design, primary/foreign key constraints, transactional indexing, and scripting batch control (`GO` / `USE`).
 * **Advanced Query Design:** Chained Common Table Expressions (CTEs), nested subqueries, and advanced joins (`LEFT` / `INNER`).
 * **Forensic Auditing:** Temporary staging tables (`#temp`) and conditional aggregation (`SUM(CASE WHEN...)`) to isolate fraudulent or anomalous transactions.
 * **Time Intelligence:** Relational date arithmetic (`DATEDIFF`, `DATEADD`, `EOMONTH`) and system clock parameters (`GETDATE()`).
