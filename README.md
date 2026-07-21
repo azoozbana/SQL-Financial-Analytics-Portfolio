@@ -1,7 +1,7 @@
 # SQL-Financial-Analytics-Portfolio
- Enterprise data pipeline and financial analytics dashboard using SQL Server (T-SQL) and Power BI (DAX)
+ data pipeline and financial analytics dashboard using SQL Server (T-SQL) and Power BI (DAX)
 
-# Enterprise Financial Analytics & Forensic Audit Portfolio
+# Financial Analytics & Forensic Audit Portfolio
 By **Abdulaziz Mohammed Banafa** — Jeddah, Saudi Arabia  
 *Accounting Graduate specializing in Financial Data Analysis & Business Intelligence*
 
