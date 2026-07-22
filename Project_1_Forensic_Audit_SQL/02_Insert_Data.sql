@@ -75,14 +75,14 @@ VALUES
 ('Office Desk', 300);
 GO
 
--- Warehouse inventory status (Includes intentionally unmapped products for audit testing)
+-- Warehouse inventory status (includes intentionally unmapped products for audit testing)
 INSERT INTO Inventory_Stock (Item_ID, Item_Name, Category, Unit_Cost, Days_In_Storage)
 VALUES 
 (101, 'Industrial Generator', 'Heavy Equipment', 12000, 400),
 (102, 'Server Rack v2', 'IT Hardware', 4500, 200),
-(103, 'Mystery Widget X', 'Electronics', 750, 45), -- Warning: Unmapped in Price_Master!
-(104, 'Forklift Battery', NULL, 900, 15),              -- Warning: Category is NULL!
-(105, 'Premium Apples', 'Perishables', 600, 10);      -- Warning: Perishable stock aging!
+(103, 'Mystery Widget X', 'Electronics', 750, 45),   -- unmapped in Price_Master, on purpose
+(104, 'Forklift Battery', NULL, 900, 15),             -- category deliberately left NULL
+(105, 'Premium Apples', 'Perishables', 600, 10);      -- perishable stock, aging test case
 GO
 
 -- Active payroll roster
@@ -93,15 +93,15 @@ VALUES
 ('John Doe', 'North America', 7000);
 GO
 
--- Sales contract records (Includes unmapped reps and inactive states for audit testing)
+-- Sales contract records (includes unmapped reps and inactive states for audit testing)
 INSERT INTO Sales_Ledger (Transaction_ID, Sales_Rep_Name, Deal_Amount, Contract_Status)
 VALUES 
-(501, 'Ahmed Mansoor', 65000, 'Approved'),  -- Active, valid regional contract
-(502, 'Ahmed Mansoor', 12000, 'Draft'),     -- Active, but unapproved state
-(503, 'Sarah Smith', 45000, 'Approved'),    -- Non-ME region (Should filter out)
-(504, 'Ghost Employee', 15000, 'Approved'), -- Warning: Rep not on Active Roster!
-(505, 'John Doe', 25000, 'Approved'),       -- Standard clean transaction
-(506, 'John Doe', 4000, 'Approved');        -- Active, but under audit threshold of $10k
+(501, 'Ahmed Mansoor', 65000, 'Approved'),   -- active, valid regional contract
+(502, 'Ahmed Mansoor', 12000, 'Draft'),      -- active, but unapproved state
+(503, 'Sarah Smith', 45000, 'Approved'),     -- non-ME region, should filter out
+(504, 'Ghost Employee', 15000, 'Approved'),  -- rep not on Active Roster, on purpose
+(505, 'John Doe', 25000, 'Approved'),        -- standard clean transaction
+(506, 'John Doe', 4000, 'Approved');         -- active, but under the $10k audit threshold
 GO
 
 -- Medical procedures master index
@@ -112,26 +112,26 @@ VALUES
 ('70551', 'MRI Scan', 1200);
 GO
 
--- Health insurance claims records (Includes over-limit and denied codes for audit testing)
+-- Health insurance claims records (includes over-limit and denied codes for audit testing)
 INSERT INTO Claims_Ledger (Claim_ID, Patient_ID, Procedure_Code, Billed_Amount, Approval_Status)
 VALUES 
-(801, 1001, '33533', 18000, 'Approved'),   -- Over Max Limit ($18k > $15k limit)
-(802, 1002, '99213', 200, 'Denied'),       -- Denied status risk
-(803, 1003, '99999', 450, 'Approved'),     -- Warning: Unindexed procedure code
-(804, 1004, '70551', 1100, 'Cancelled'),   -- Cancelled state (Should filter out)
-(805, 1005, '70551', 1300, 'Approved'),    -- Over Max Limit ($1.3k > $1.2k limit)
-(806, 1006, '99213', 150, 'Approved');     -- Standard compliant transaction
+(801, 1001, '33533', 18000, 'Approved'),    -- over max limit ($18k > $15k)
+(802, 1002, '99213', 200, 'Denied'),        -- denied status, risk case
+(803, 1003, '99999', 450, 'Approved'),      -- unindexed procedure code, on purpose
+(804, 1004, '70551', 1100, 'Cancelled'),    -- cancelled state, should filter out
+(805, 1005, '70551', 1300, 'Approved'),     -- over max limit ($1.3k > $1.2k)
+(806, 1006, '99213', 150, 'Approved');      -- standard compliant transaction
 GO
 
 
 -- =========================================================================
--- DATABASE 2: AlNoorTrading (Core Enterprise Star Schema)
+-- DATABASE 2: AlNoorTrading (Core Star Schema)
 -- =========================================================================
 
 USE AlNoorTrading;
 GO
 
--- Master customer records (Includes Saudi National Logistics)
+-- Master customer records
 INSERT INTO dim_customers (customer_id, customer_name, city, customer_type, credit_limit)
 VALUES 
 (1, 'Al-Rajhi Supplies', 'Riyadh', 'Wholesale', 100000),
@@ -145,7 +145,7 @@ VALUES
 (9, 'Saudi National Logistics', 'Riyadh', 'Wholesale', 150000);
 GO
 
--- Employee directory (Includes null names for audit testing)
+-- Employee directory (includes a NULL name on purpose, for audit testing)
 INSERT INTO dim_employees (employee_id, employee_name, department, job_title, hire_date, salary)
 VALUES 
 (1, 'Abdullah Al-Saud', 'Sales', 'Sales Manager', '2021-03-01', 12000),
@@ -169,29 +169,27 @@ VALUES
 (8, 'Whiteboard', 'Office Supplies', 60, 110);
 GO
 
--- Central sales transaction ledger (Includes Sales 21 & 22)
+-- Central sales transaction ledger
 INSERT INTO fact_sales (sale_id, sale_date, customer_id, employee_id, product_id, quantity, discount_pct, is_returned)
 VALUES 
 (1, '2024-01-05', 1, 1, 1, 10, 0.10, 'No'),
 (2, '2024-01-08', 2, 2, 2, 5, 0.05, 'No'),
 (3, '2024-01-12', 3, 2, 4, 2, 0.00, 'No'),
-(4, '2024-01-15', 4, 1, 3, 8, 0.15, 'Yes'), -- Warning: Returned transaction
+(4, '2024-01-15', 4, 1, 3, 8, 0.15, 'Yes'),   -- returned transaction
 (5, '2024-01-20', 1, 3, 5, 15, 0.00, 'No'),
 (6, '2024-02-02', 5, 2, 1, 3, 0.00, 'No'),
 (7, '2024-02-05', 6, 1, 2, 12, 0.20, 'No'),
 (8, '2024-02-10', 2, 5, 6, 4, 0.10, 'No'),
-(9, '2024-02-14', 7, 3, 4, 6, 0.00, 'Yes'), -- Warning: Returned transaction
+(9, '2024-02-14', 7, 3, 4, 6, 0.00, 'Yes'),   -- returned transaction
 (10, '2024-02-18', 8, 1, 7, 9, 0.05, 'No'),
 (11, '2024-03-01', 1, 2, 8, 20, 0.00, 'No'),
 (12, '2024-03-05', 3, 3, 1, 7, 0.25, 'No'),
 (13, '2024-03-10', 4, 5, 2, 3, 0.00, 'No'),
-(14, '2024-03-15', NULL, 1, 5, 10, 0.10, 'No'), -- Warning: Unassigned customer ID
-(15, '2024-03-20', 6, 2, 3, 5, 0.00, 'Yes'), -- Warning: Returned transaction
+(14, '2024-03-15', NULL, 1, 5, 10, 0.10, 'No'),  -- unassigned customer, on purpose
+(15, '2024-03-20', 6, 2, 3, 5, 0.00, 'Yes'),   -- returned transaction
 (16, '2024-04-02', 2, 6, 6, 8, 0.15, 'No'),
 (17, '2024-04-08', 5, 3, 7, 4, 0.00, 'No'),
 (18, '2024-04-12', 7, 1, 8, 25, 0.05, 'No'),
 (19, '2024-04-18', 8, 2, 1, 6, 0.00, 'No'),
-(20, '2024-04-25', 1, 5, 4, 12, 0.20, 'No'),
-(21, '2024-01-15', 1, 1, 1, 10, 0.00, 'No'), -- High-value dynamic test transaction
-(22, '2024-03-22', 2, 2, 2, 5, 0.00, 'No');  -- High-value dynamic test transaction
+(20, '2024-04-25', 1, 5, 4, 12, 0.20, 'No');
 GO

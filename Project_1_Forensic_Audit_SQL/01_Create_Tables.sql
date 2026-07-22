@@ -1,3 +1,19 @@
+/* ============================================================
+   01_Create_Tables.sql
+   ------------------------------------------------------------
+   Sets up two separate practice databases:
+
+   1. FinancePractice - a looser staging/playground schema, used 
+      for one-off audit scenarios (expenses, payroll, insurance 
+      claims, sales commissions). No FK constraints here on 
+      purpose - built for quick, flexible audit testing.
+
+   2. AlNoorTrading - the main portfolio database, a proper star 
+      schema (fact_sales + three dimension tables) with real 
+      FK constraints enforcing referential integrity.
+   ============================================================ */
+
+
 -- =========================================================================
 -- DATABASE 1: FinancePractice (Staging & Practice Playground)
 -- =========================================================================
@@ -5,7 +21,6 @@
 USE FinancePractice;
 GO
 
--- Drop existing tables to ensure a clean slate
 DROP TABLE IF EXISTS Company_Expenses;
 DROP TABLE IF EXISTS Corporate_Ledger;
 DROP TABLE IF EXISTS Department_Directory;
@@ -18,17 +33,17 @@ DROP TABLE IF EXISTS Procedure_Master;
 DROP TABLE IF EXISTS Claims_Ledger;
 GO
 
--- Core transactional table for company expenses
+-- Company expense transactions by department
 CREATE TABLE Company_Expenses (
     Transaction_ID INT IDENTITY(1,1) PRIMARY KEY,
     Expense_Date DATE,
     Department VARCHAR(50),
-    Category VARCHAR(50), -- Fixed spelling typo
+    Category VARCHAR(50),
     Amount DECIMAL(10, 2)
 );
 GO
 
--- Corporate general ledger records with approval tracking
+-- Corporate general ledger, with who approved each entry
 CREATE TABLE Corporate_Ledger (
     Ledger_Sequence_ID INT IDENTITY(1,1) PRIMARY KEY,
     Invoice_ID INT,
@@ -40,28 +55,30 @@ CREATE TABLE Corporate_Ledger (
 );
 GO
 
--- Directory mapping departments to their active managers
+-- Which manager owns which department
 CREATE TABLE Department_Directory (
     Department VARCHAR(50),
     Manager_Name VARCHAR(50)
 );
 GO
 
--- Master directory of approved vendors
+-- Approved supplier list
 CREATE TABLE Approved_Vendors (
     Vendor_Code INT PRIMARY KEY,
     Vendor_Name VARCHAR(50)
 );
 GO
 
--- Standard cost reference sheet for products
+-- Standard cost reference sheet, used to catch invoices billed 
+-- above the agreed price
 CREATE TABLE Price_Master (
     Item_Name VARCHAR(50) PRIMARY KEY,
     Standard_Cost INT
 );
 GO
 
--- Warehouse stock ledger with storage aging
+-- Warehouse stock, including how long each item has been sitting - 
+-- useful for flagging aging/dead inventory
 CREATE TABLE Inventory_Stock (
     Item_ID INT PRIMARY KEY,
     Item_Name VARCHAR(50),
@@ -71,7 +88,7 @@ CREATE TABLE Inventory_Stock (
 );
 GO
 
--- Active payroll roster for sales representatives
+-- Active sales reps and their base salary, used for commission audits
 CREATE TABLE Active_Roster (
     Rep_Name VARCHAR(50) PRIMARY KEY,
     Region VARCHAR(50),
@@ -79,7 +96,7 @@ CREATE TABLE Active_Roster (
 );
 GO
 
--- Sales transaction records for commissions
+-- Sales deals booked, with contract status (Draft/Active/Cancelled etc.)
 CREATE TABLE Sales_Ledger (
     Transaction_ID INT PRIMARY KEY,
     Sales_Rep_Name VARCHAR(50),
@@ -88,7 +105,7 @@ CREATE TABLE Sales_Ledger (
 );
 GO
 
--- Master list of medical procedures and allowed insurance caps
+-- Medical procedure codes and the maximum insurance will pay per procedure
 CREATE TABLE Procedure_Master (
     Proc_Code VARCHAR(10) PRIMARY KEY,
     Category VARCHAR(50),
@@ -96,7 +113,7 @@ CREATE TABLE Procedure_Master (
 );
 GO
 
--- Insurance claims ledger
+-- Insurance claims submitted against those procedures
 CREATE TABLE Claims_Ledger (
     Claim_ID INT PRIMARY KEY,
     Patient_ID INT,
@@ -108,13 +125,13 @@ GO
 
 
 -- =========================================================================
--- DATABASE 2: AlNoorTrading (Core Enterprise Star Schema)
+-- DATABASE 2: AlNoorTrading (Core Star Schema)
 -- =========================================================================
 
 USE master;
 GO
 
--- Safely recreate AlNoorTrading database to avoid deployment conflicts
+-- Full rebuild every run - fine for a practice/portfolio database
 DROP DATABASE IF EXISTS AlNoorTrading;
 GO
 
@@ -124,11 +141,13 @@ GO
 USE AlNoorTrading;
 GO
 
--- Ensure clean schema recreation
+-- fact_sales dropped first since FK constraints reference the 
+-- dimension tables - SQL Server won't drop a table something 
+-- else still points to
+DROP TABLE IF EXISTS fact_sales;
 DROP TABLE IF EXISTS dim_customers;
 DROP TABLE IF EXISTS dim_employees;
 DROP TABLE IF EXISTS dim_products;
-DROP TABLE IF EXISTS fact_sales;
 GO
 
 -- Customer master directory
@@ -139,8 +158,9 @@ CREATE TABLE dim_customers (
     customer_type   VARCHAR(20),  -- 'Retail' or 'Wholesale'
     credit_limit    DECIMAL(10,2)
 );
+GO
 
--- Employee payroll directory
+-- Employee/payroll directory
 CREATE TABLE dim_employees (
     employee_id     INT PRIMARY KEY,
     employee_name   VARCHAR(100),
@@ -149,8 +169,9 @@ CREATE TABLE dim_employees (
     hire_date       DATE,
     salary          DECIMAL(10,2)
 );
+GO
 
--- Product catalog directory
+-- Product catalog
 CREATE TABLE dim_products (
     product_id      INT PRIMARY KEY,
     product_name    VARCHAR(100),
@@ -158,16 +179,26 @@ CREATE TABLE dim_products (
     unit_cost       DECIMAL(10,2),
     unit_price      DECIMAL(10,2)
 );
+GO
 
--- Central sales transaction fact table
+-- Central sales fact table - one row per line item sold.
+-- FK constraints ensure the database itself rejects a sale pointing 
+-- to a customer/employee/product that doesn't exist.
 CREATE TABLE fact_sales (
     sale_id         INT PRIMARY KEY,
     sale_date       DATE,
-    customer_id     INT,
-    employee_id     INT,
-    product_id      INT,
+    customer_id     INT NULL,
+    employee_id     INT NULL,
+    product_id      INT NOT NULL,
     quantity        INT,
     discount_pct    DECIMAL(4,2),
-    is_returned     VARCHAR(3)  -- 'Yes' or 'No'
+    is_returned     VARCHAR(3),  -- 'Yes' or 'No'
+
+    CONSTRAINT FK_fact_sales_customer 
+        FOREIGN KEY (customer_id) REFERENCES dim_customers(customer_id),
+    CONSTRAINT FK_fact_sales_employee 
+        FOREIGN KEY (employee_id) REFERENCES dim_employees(employee_id),
+    CONSTRAINT FK_fact_sales_product 
+        FOREIGN KEY (product_id) REFERENCES dim_products(product_id)
 );
 GO
