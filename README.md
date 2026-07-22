@@ -59,6 +59,10 @@ Instead of relying on manual, fragile, and slow Excel spreadsheets, these projec
 
 ## Dashboard Presentation (Screenshots)
 
+* **All four report pages are fully interactive with synced slicers 
+filtering by year, region, or category on any page updates the 
+entire report.
+
 ### Page 1: Executive Performance Dashboard (Executive P&L Summary)
 
 <img width="1078" height="808" alt="Executive Performance Dashboard" src="https://github.com/user-attachments/assets/fe802466-a5c6-4c60-826c-2527ec5da73f" />
