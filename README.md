@@ -10,7 +10,7 @@ By **Abdulaziz Mohammed Banafa** — Jeddah, Saudi Arabia
 ## Portfolio Overview
 Welcome to my professional data analytics portfolio. This repository contains two distinct, high-impact projects designed to solve real-world corporate finance, auditing, and business intelligence challenges. 
 
-Instead of relying on manual, fragile, and slow Excel spreadsheets, these projects demonstrate how to build robust, automated, and secure data pipelines directly from relational databases to executive-ready presentation layers.
+Instead of relying on manual, fragile, and slow Excel spreadsheets, these projects demonstrate how to build robust, automated data pipelines directly from relational databases to executive-ready presentation layers.
 
 ---
 
@@ -32,7 +32,7 @@ Instead of relying on manual, fragile, and slow Excel spreadsheets, these projec
 *   **`02_Insert_Data.sql`:** The data seeding scripts that populate the raw rows.
 *   **`03_Audit_Playground.sql`:** Completed ledger, payroll, and credit audits for both practice databases.
 
-### [Folder 2: Project 2 — Enterprise BI Sales Pipeline](./Project_2_Enterprise_BI_Pipeline)
+### [Folder 2: Project 2 — Superstore BI Sales Pipeline](./Project_2_Enterprise_BI_Pipeline)
 *This folder contains my advanced data warehouse pipeline, ETL auditing, and Power BI visual assets.*
 *   **`04_v_Orders_Analysis_Pipeline.sql`:** The advanced master view with the `OUTER APPLY` historical VAT lookup and dimensional split columns.
 *   **`05_ETL_Data_Integrity_Audits.sql`:** Data reconciliation and troubleshooting queries, such as `TRIM`, `LEN()`, and row-count checks.
@@ -74,3 +74,8 @@ Instead of relying on manual, fragile, and slow Excel spreadsheets, these projec
 ### Page 4: Product Returns & Discount Risk Analysis
 
 <img width="1416" height="795" alt="Product Returns   Discount Risk Analysis" src="https://github.com/user-attachments/assets/ef5316dd-b181-4c96-a073-12aa1a29c8a5" />
+
+
+## Contact
+LinkedIn: www.linkedin.com/in/abdulazizbanafa
+Email: Azoozbanafea666@outlook.com
