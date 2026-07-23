@@ -65,19 +65,25 @@ entire report.
 
 ### Page 1: Executive Performance Dashboard (Executive P&L Summary)
 
-<img width="1078" height="808" alt="Executive Performance Dashboard" src="https://github.com/user-attachments/assets/fe802466-a5c6-4c60-826c-2527ec5da73f" />
+<img width="976" height="727" alt="exec" src="https://github.com/user-attachments/assets/14f0bf72-c1e0-4e91-9b32-5e57ba9ae10c" />
+<img width="981" height="721" alt="execu" src="https://github.com/user-attachments/assets/74e21bd8-98ab-41df-a398-14710ea9aa25" />
+
 
 ### Page 2: Manager & Regional Performance
 
-<img width="1430" height="807" alt="Manager   Regional Performance" src="https://github.com/user-attachments/assets/e118427b-1f32-49d1-94b1-790d189241d2" />
+<img width="1225" height="680" alt="mana" src="https://github.com/user-attachments/assets/0768eed8-5a64-4044-805e-cdeba393bd2e" />
+<img width="1218" height="690" alt="manag" src="https://github.com/user-attachments/assets/3b9eb681-0763-4991-ad19-5788ccc76a32" />
+
 
 ### Page 3: Sales Trend & Time Intelligence
 
-<img width="1414" height="794" alt="Sales Trend   Time Intelligence" src="https://github.com/user-attachments/assets/51a2b14f-acc3-474b-8d15-11218ebb67a6" />
+<img width="1225" height="682" alt="sales" src="https://github.com/user-attachments/assets/a577a931-b792-41db-83ea-aaae72236810" />
+
 
 ### Page 4: Product Returns & Discount Risk Analysis
 
-<img width="1416" height="795" alt="Product Returns   Discount Risk Analysis" src="https://github.com/user-attachments/assets/ef5316dd-b181-4c96-a073-12aa1a29c8a5" />
+<img width="1304" height="727" alt="ret" src="https://github.com/user-attachments/assets/225c5b13-6305-4ce2-bf77-fa770cf4cc36" />
+
 
 
 ## Contact
